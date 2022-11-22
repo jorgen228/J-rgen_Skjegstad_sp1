@@ -5,6 +5,10 @@ body {
   height: 100%;
 }
 
+table {
+  text-align: center;
+}
+
 * {
   font-family: Calibri;
   color: #212529;
@@ -87,7 +91,7 @@ body {
   font-family: Consolas;
   box-shadow: none;
   width: 75px;
-  margin-right: 200px;
+  margin-right: 203px;
 }
 
 #out-btn:hover{
@@ -104,7 +108,7 @@ body {
   font-family: Consolas;
   box-shadow: none;
   width: 75px;
-  margin-left: 200px;
+  margin-left: 203px;
 }
 
 #in-btn:hover {
@@ -148,7 +152,7 @@ body {
 
 #abb-button-container {
   justify-content: flex-end;
-  margin-right: 210px;
+  margin-right: 215px;
 }
 
 #add-btn {
@@ -200,7 +204,7 @@ body {
 
 #clear-button-container {
   justify-content: flex-end;
-  margin-right: 210px;
+  margin-right: 215px;
 }
 
 #clear-btn {
