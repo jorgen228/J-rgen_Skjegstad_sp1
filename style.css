@@ -1,0 +1,222 @@
+body {
+  margin: 0;
+  padding: 5px;
+  width: 100%;
+  height: 100%;
+}
+
+* {
+  font-family: Calibri;
+  color: #212529;
+}
+
+#nav {
+  justify-content: end;
+}
+
+#nav button {
+  border: none;
+  background-color: #0E8EA8;
+  color: #fff;
+  margin: 1px;
+  box-shadow: none;
+}
+
+#nav button:hover {
+  background-color: #25aec9;
+}
+
+#nav button:active {
+  background-color: #35bdd8;
+}
+
+.dropdown-menu li {
+  background-color: #83D1E1;
+  color: #212529;
+  margin: 1px;
+}
+
+#company-logo {
+  width: 200px;
+}
+
+#company-title-div {
+  justify-content: center;
+  padding: 50px;
+  padding-left: 100px;
+}
+
+#staff-container {
+  justify-content: center;
+  margin-top: 20px;
+}
+
+#employee-table-container {
+  justify-content: center;
+}
+
+#employee-table-container table {
+  border: 1px solid #212529;
+  margin: 5px;
+  border-collapse: separate;
+  border-radius: 6px;
+}
+
+#employee-table-container table th {
+  font-family: Consolas;
+  background-color: #0E8EA8;
+  color: #fff;
+  padding: 15px;
+}
+
+#employee-table-container table td {
+  font: calibri;
+  height: 50px;
+  background-color: #83D1E1;
+  color: #212529;
+}
+
+#employee-buttons {
+  justify-content: space-around;
+}
+
+#out-btn {
+  background-color: #dc3545;
+  color: #fff;
+  font-family: Consolas;
+  box-shadow: none;
+  width: 75px;
+  margin-right: 50px;
+}
+
+#out-btn:hover{
+  background-color: #ea5564;
+}
+
+#out-btn:active{
+  background-color: #ee727f;
+}
+
+#in-btn {
+  background-color: #198754;
+  color: #fff;
+  font-family: Consolas;
+  box-shadow: none;
+  width: 75px;
+  margin-left: 50px;
+}
+
+#in-btn:hover {
+  background-color: #31a971;
+}
+
+#in-btn:active {
+  background-color: #41bd83;
+}
+
+#schedule-title-container {
+  justify-content: center;
+  margin-top: 50px;
+}
+
+#schedule-table-container {
+  justify-content: center;
+}
+
+#schedule-table-container table {
+  border: 1px solid #212529;
+  margin: 5px;
+  border-collapse: separate;
+  border-radius: 6px;
+}
+
+#schedule-table-container table th {
+  font-family: Consolas;
+  background-color: #0E8EA8;
+  color: #fff;
+  padding: 15px;
+}
+
+#schedule-table-container table td {
+  font: calibri;
+  height: 50px;
+  background-color: #83D1E1;
+  color: #212529;
+}
+
+#abb-button-container {
+  justify-content: flex-start;
+  margin-left: 400px;
+}
+
+#add-btn {
+  background-color: #198754;
+  color: #fff;
+  font-family: Consolas;
+  box-shadow: none;
+  width: 75px;
+}
+
+#add-btn:hover {
+  background-color: #31a971;
+}
+
+#add-btn:active {
+  background-color: #41bd83;
+}
+
+#delivery-title-container {
+  justify-content: center;
+  margin-top: 50px;
+}
+
+#delivery-table-container {
+  justify-content: center;
+}
+
+#delivery-table-container table {
+  border: 1px solid #212529;
+  margin: 5px;
+  border-collapse: separate;
+  border-radius: 6px;
+}
+
+#delivery-table-container table th {
+  font-family: Consolas;
+  background-color: #0E8EA8;
+  color: #fff;
+  padding: 15px;
+}
+
+#delivery-table-container table td {
+  font: calibri;
+  height: 50px;
+  background-color: #83D1E1;
+  color: #212529;
+}
+
+#clear-button-container {
+  justify-content: flex-start;
+  margin-left: 400px;
+  margin-bottom: 100px;
+}
+
+#clear-btn {
+  background-color: #dc3545;
+  color: #fff;
+  font-family: Consolas;
+  box-shadow: none;
+  width: 75px;
+}
+
+#clear-btn:hover{
+  background-color: #ea5564;
+}
+
+#clear-btn:active{
+  background-color: #ee727f;
+}
+
+#time-container {
+  flex-direction: row-reverse;
+}

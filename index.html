@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WeDeliverTECH reception management</title>
+    <link rel="stylesheet" href="style.css" />
+
+    <link rel="stylesheet" href="/bootstrap-5.0.2-dist/css/bootstrap.css" />
+    <link
+      rel="stylesheet"
+      href="/bootstrap-5.0.2-dist/css/bootstrap-grid.rtl.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/bootstrap-5.0.2-dist/css/bootstrap-grid.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/bootstrap-5.0.2-dist/css/bootstrap-grid.rtl.min.css"
+    />
+
+    <script src="/bootstrap-5.0.2-dist/js/bootstrap.bundle.js"></script>
+    <script src="/bootstrap-5.0.2-dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="/jquery-3.6.0"></script>
+  </head>
+
+  <body>
+    <div id="nav" class="d-flex w-100">
+      <button class="btn">Dashboard</button>
+      <div class="dropdown">
+        <button
+          class="dropdown-toggle btn"
+          id="inventory-dropdown"
+          type="button"
+          data-bs-toggle="dropdown"
+        >
+          Inventory
+        </button>
+        <ul class="dropdown-menu p-0" aria-labelledby="inventory-dropdown">
+          <li><a href="#" class="dropdown-item">Search</a></li>
+          <li><a href="#" class="dropdown-item">Add</a></li>
+          <li><a href="#" class="dropdown-item">Remove</a></li>
+        </ul>
+      </div>
+      <div class="dropdown">
+        <button
+          class="dropdown-toggle btn"
+          id="orders-dropdown"
+          type="button"
+          data-bs-toggle="dropdown"
+        >
+          Orders
+        </button>
+        <ul class="dropdown-menu p-0" aria-labelledby="orders-dropdown">
+          <li><a href="#" class="dropdown-item">Search</a></li>
+          <li><a href="#" class="dropdown-item">Add</a></li>
+          <li><a href="#" class="dropdown-item">Remove</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="d-flex">
+      <div class="d-flex flex-column w-25">
+        <img id="company-logo" src="WDT-Logo.png" alt="Company logo" />
+      </div>
+
+      <div id="company-title-div" class="d-flex flex-column w-75">
+        <h1>Reception Management Dashboard</h1>
+      </div>
+    </div>
+
+    <div>
+      <div id="staff-container" class="d-flex">
+        <h3>Staff</h3>
+      </div>
+
+      <div id="employee-table-container" class="d-flex">
+        <table>
+          <tr>
+            <th>Picture:</th>
+            <th>Name:</th>
+            <th>Surname:</th>
+            <th>Email address:</th>
+            <th>Status:</th>
+            <th>Out time:</th>
+            <th>Duration:</th>
+            <th>Expected return time:</th>
+          </tr>
+        </table>
+      </div>
+
+      <div id="employee-buttons" class="d-flex">
+        <button id="out-btn" class="btn">Out</button>
+        <button id="in-btn" class="in-btn btn">In</button>
+      </div>
+    </div>
+
+    <div>
+      <div id="schedule-title-container" class="d-flex">
+        <h3>Schedule delivery</h3>
+      </div>
+      <div id="schedule-table-container" class="d-flex">
+        <table class="schedule-table">
+          <tr>
+            <th>Vehicle:</th>
+            <th>Name:</th>
+            <th>Surname:</th>
+            <th>Telephone:</th>
+            <th>Address:</th>
+            <th>Return time:</th>
+          </tr>
+        </table>
+      </div>
+      <div id="abb-button-container" class="d-flex">
+        <button id="add-btn" class="btn">Add</button>
+      </div>
+    </div>
+
+    <div>
+      <div id="delivery-title-container" class="d-flex">
+        <h3>Delivery Board</h3>
+      </div>
+      <div id="delivery-table-container" class="d-flex">
+        <table class="delivery-table">
+          <tr id="delivery-table-header">
+            <th>Vehicle:</th>
+            <th>Name:</th>
+            <th>Surname:</th>
+            <th>Telephone:</th>
+            <th>Address:</th>
+            <th>Return time:</th>
+          </tr>
+        </table>
+      </div>
+      <div id="clear-button-container" class="d-flex">
+        <button id="clear-btn" class="btn">Clear</button>
+      </div>
+    </div>
+
+    <div>
+      <div id="time-container" class="d-flex fixed-bottom">
+        <h5>Current date and time</h5>
+      </div>
+    </div>
+
+    <script src="/bootstrap-5.0.2-dist/js/bootstrap.bundle.js"></script>
+    <script src="wdt_app.js"></script>
+  </body>
+</html>
