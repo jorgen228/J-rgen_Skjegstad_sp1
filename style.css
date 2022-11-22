@@ -56,6 +56,7 @@ body {
 }
 
 #employee-table-container table {
+  width: 1000px;
   border: 1px solid #212529;
   margin: 5px;
   border-collapse: separate;
@@ -86,7 +87,7 @@ body {
   font-family: Consolas;
   box-shadow: none;
   width: 75px;
-  margin-right: 50px;
+  margin-right: 200px;
 }
 
 #out-btn:hover{
@@ -103,7 +104,7 @@ body {
   font-family: Consolas;
   box-shadow: none;
   width: 75px;
-  margin-left: 50px;
+  margin-left: 200px;
 }
 
 #in-btn:hover {
@@ -124,6 +125,7 @@ body {
 }
 
 #schedule-table-container table {
+  width: 1000px;
   border: 1px solid #212529;
   margin: 5px;
   border-collapse: separate;
@@ -145,8 +147,8 @@ body {
 }
 
 #abb-button-container {
-  justify-content: flex-start;
-  margin-left: 400px;
+  justify-content: flex-end;
+  margin-right: 210px;
 }
 
 #add-btn {
@@ -175,6 +177,7 @@ body {
 }
 
 #delivery-table-container table {
+  width: 1000px;
   border: 1px solid #212529;
   margin: 5px;
   border-collapse: separate;
@@ -196,9 +199,8 @@ body {
 }
 
 #clear-button-container {
-  justify-content: flex-start;
-  margin-left: 400px;
-  margin-bottom: 100px;
+  justify-content: flex-end;
+  margin-right: 210px;
 }
 
 #clear-btn {
@@ -219,4 +221,5 @@ body {
 
 #time-container {
   flex-direction: row-reverse;
+  margin-right: 5px;
 }
