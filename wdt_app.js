@@ -1,12 +1,3 @@
-/* Function displayTime
-let today = new Date()
-let day = today.day etc
-
-getelement by id = time element
-let element.innertext = `Backtick string`
-
-call function with setinterval
- */
 
 // Clock functionality
 const clockElement = document.getElementById("clock-element");
