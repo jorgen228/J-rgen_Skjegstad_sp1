@@ -28,6 +28,7 @@ class StaffMember extends Employee {
   constructor(
     name,
     surName,
+    staffNumber,
     picture,
     email,
     status,
@@ -35,9 +36,11 @@ class StaffMember extends Employee {
     duration,
     current,
     expectedReturnTime,
-    timerID
+    toastDiv,
+    liveToast
   ) {
     super(name, surName);
+    this.staffNumber = staffNumber;
     this.picture = picture;
     this.email = email;
     this.status = status;
@@ -45,10 +48,12 @@ class StaffMember extends Employee {
     this.duration = duration;
     this.current = current;
     this.expectedReturnTime = expectedReturnTime;
+    this.toastDiv = null;
+    this.liveToast = null;
   }
   staffMemberIsLate() {
-    console.log(this);
-    console.log("staffmember is late!");
+    uppdateToast(this.picture, this.name, this.outTime);
+    $(`#liveToast`).toast("show");
   }
   estimateTime() {
     let targetHours = Math.floor(this.duration / 60 / 60);
@@ -58,24 +63,16 @@ class StaffMember extends Employee {
     targetSeconds = targetSeconds < 10 ? "0" + targetSeconds : targetSeconds;
     this.duration--;
     this.current = `${targetHours}:${targetMinutes}:${targetSeconds}`;
-  }
-  // countDownTime() {
-  //   this.duration--;
-  //   console.log(this.duration);
-  //   currentObjects[i].estimateTime(currentObjects[i].duration);
-  // }
-  startCountDown() {
-    this.timerID = setInterval(() => {
-      this.estimateTime();
-    }, 1000);
-  }
-  stopCountDown() {
-    clearInterval(this.timerID);
+    rowArray[this.staffNumber].childNodes[6].textContent = this.current;
+    if (this.duration === -1) {
+      clearInterval(this.timerID);
+      this.staffMemberIsLate();
+    }
   }
 }
 class DeliveryDriver extends Employee {
   constructor(name, surName, vehicle, telephone, deliveryAddress, returnTime) {
-    super(name, surName);
+    super(name, surName, staffNumber);
     this.vehicle = vehicle;
     this.telephone = telephone;
     this.deliveryAddress = deliveryAddress;
@@ -124,6 +121,8 @@ function displayStaffMembers(staffObject) {
   staffNumber++;
 }
 
+let staffInt = 0;
+
 function staffUserGet() {
   numberOfEmplyees.forEach(() => {
     $.ajax({
@@ -138,6 +137,7 @@ function staffUserGet() {
         const newStaff = new StaffMember(
           staffName,
           staffSurName,
+          staffInt,
           staffPicture,
           staffEmail,
           "In",
@@ -148,6 +148,7 @@ function staffUserGet() {
         );
         displayStaffMembers(newStaff);
         staffArray.push(newStaff);
+        staffInt++;
       },
     });
   });
@@ -207,6 +208,7 @@ $("#in-btn").click(staffIn);
 function staffOut() {
   minutesAway = parseInt(prompt("How long will they be away in minutes?"));
   for (i = 0; i < currentObjects.length; i++) {
+    clearInterval(currentObjects[i].timerID);
     currentObjects[i].status = "Out";
 
     let clockString = "__";
@@ -238,7 +240,10 @@ function staffOut() {
     currentObjects[i].duration = Math.floor(minutesAway * 60);
 
     currentObjects[i].estimateTime();
-    currentObjects[i].timerID = setInterval(currentObjects[i].startCountDown, 1000)
+    currentObjects[i].timerID = setInterval(
+      currentObjects[i].estimateTime.bind(currentObjects[i]),
+      1000
+    );
   }
 
   $(".selected").toggleClass("unselected");
@@ -265,8 +270,11 @@ function countDownTimer() {
   }
 }
 
+// Staff in functionality
+
 function staffIn() {
   for (i = 0; i < currentObjects.length; i++) {
+    clearInterval(currentObjects[i].timerID);
     currentObjects[i].status = "Out";
     currentObjects[i].status = "In";
     currentObjects[i].outTime = "__";
@@ -277,7 +285,6 @@ function staffIn() {
 
   $(".selected").toggleClass("unselected");
   $(".selected").toggleClass("selected");
-  // clearInterval();
 
   uppdateTable();
   currentObjects = [];
@@ -290,4 +297,112 @@ function uppdateTable() {
     rowArray[i].childNodes[6].textContent = staffArray[i].current;
     rowArray[i].childNodes[7].textContent = staffArray[i].expectedReturnTime;
   }
+}
+
+$("#liveToastBtn").click(function () {
+  $(`#liveToast`).toast("show");
+});
+
+function uppdateToast(img, name, timeOut) {
+  let toastHeader = document.getElementById("toast-header");
+  let toastImg = document.getElementById("toast-img");
+  let toastName = document.getElementById("toast-name");
+  let toastTimeAway = document.getElementById("toast-time-away");
+  toastHeader.innerText = "A staffmember is running late!";
+  toastImg.src = img;
+  toastName.textContent = "Name: " + name;
+  toastTimeAway.textContent = "Time away: " + timeOut;
+}
+
+// Create delivery functionality
+
+const vehicleBtn = document.getElementById("vehicle-dropdown");
+const inputName = document.getElementById("input-name");
+const inputSurname = document.getElementById("input-surname");
+const inputTelephone = document.getElementById("input-telephone");
+const inputAddress = document.getElementById("input-address");
+const inputReturn = document.getElementById("input-return");
+
+function uppdateToBicycle() {
+  vehicleBtn.innerHTML = `<i class="bi bi-bicycle"></i>`;
+}
+
+function uppdateToCar() {
+  vehicleBtn.innerHTML = `<i class="bi bi-car-front-fill"></i>`;
+}
+
+let currenDeliveries = [];
+
+function addDelivery() {
+  let selectedVehicle = vehicleBtn.innerHTML;
+  let selectedName = inputName.value;
+  let selectedSurname = inputSurname.value;
+  let selectedTelephone = inputTelephone.value;
+  let selectedAddress = inputAddress.value;
+  let selectedReturn = inputReturn.value;
+  let timeChar = ":";
+
+  if (
+    isNaN(selectedName) &&
+    isNaN(selectedSurname) &&
+    !isNaN(selectedTelephone) &&
+    isNaN(selectedAddress) &&
+    selectedReturn.includes(timeChar)
+  ) {
+    console.log("all info iss correct");
+    let newDelivery = new DeliveryDriver(
+      selectedName,
+      selectedSurname,
+      selectedVehicle,
+      selectedTelephone,
+      selectedAddress,
+      selectedReturn
+    );
+    console.log(newDelivery);
+    currenDeliveries.push(newDelivery);
+    displayDelivery(newDelivery);
+  } else {
+    alert("The delivery info is not of correct type. Try again.");
+  }
+
+  vehicleBtn.innerHTML = "Select:";
+  inputName.value = "";
+  inputSurname.value = "";
+  inputTelephone.value = "";
+  inputAddress.value = "";
+  inputReturn.value = "";
+}
+
+$("#add-btn").click(addDelivery);
+
+// Display delivery functionality
+let rowdeliveryArray = [];
+const deliveryTable = document.getElementById("delivery-table-container");
+const deliveryTbody = deliveryTable.getElementsByTagName("tbody")[0];
+let deliveryRowSuffix = "deliveryRow-";
+let deliveryRowNumber = 1;
+
+function displayDelivery(deliveryObject) {
+  let newDeliveryRow = deliveryTbody.insertRow();
+  let newDeliveryCell1 = newDeliveryRow.insertCell();
+  newDeliveryCell1.innerHTML = deliveryObject.vehicle;
+  let newDeliveryCell2 = newDeliveryRow.insertCell();
+  newDeliveryCell2.textContent = deliveryObject.name;
+  let newDeliveryCell3 = newDeliveryRow.insertCell();
+  newDeliveryCell3.textContent = deliveryObject.surName;
+  let newDeliveryCell4 = newDeliveryRow.insertCell();
+  newDeliveryCell4.textContent = deliveryObject.telephone;
+  let newDeliveryCell5 = newDeliveryRow.insertCell();
+  newDeliveryCell5.textContent = deliveryObject.deliveryAddress;
+  let newDeliveryCell6 = newDeliveryRow.insertCell();
+  newDeliveryCell6.textContent = deliveryObject.returnTime;
+  newDeliveryRow.id = `${deliveryRowSuffix}${deliveryRowNumber}`;
+  newDeliveryCell1.classList.add("deliveryCell");
+  $(".deliveryCell").click(getDelivery);
+  rowdeliveryArray.push(newDeliveryRow);
+  deliveryRowNumber++;
+}
+
+function getDelivery() {
+  console.log(this);
 }

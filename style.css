@@ -255,5 +255,41 @@ table {
   margin-right: 5px;
 }
 
+#toast-btn {
+  border: none;
+  background-color: #0E8EA8;
+  color: #fff;
+  margin: 1px;
+  box-shadow: none;
+}
 
+#toast-btn:hover {
+  background-color: #25aec9;
+}
 
+#toast-btn:active {
+  background-color: #35bdd8;
+}
+
+input {
+  max-width: 120px;
+}
+
+#select {
+  max-width: 120px;
+  margin: auto;
+}
+
+#bicycle, #car {
+  text-align: center;
+  font-size: 25px;
+}
+
+#vehicle-dropdown {
+  font-size: 25px;
+  width: 100px;
+}
+
+#delivery-table-container {
+  font-size: 18px;
+}
