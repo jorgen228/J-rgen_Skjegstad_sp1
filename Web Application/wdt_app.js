@@ -273,6 +273,10 @@ function staffOut() {
     } else {
       returnString = `${returnHour}:${returnMinutes}`;
     }
+    if (returnHour < 10) {
+      returnHour = `0${returnHour}`;
+      returnString = `${returnHour}:${returnMinutes}`;
+    }
     currentObjects[i].expectedReturnTime = returnString;
     currentObjects[i].duration = Math.floor(minutesAway * 60);
 
