@@ -3,6 +3,7 @@ body {
   padding: 5px;
   width: 100%;
   height: 100%;
+  padding-bottom: 200px;
 }
 
 table {
@@ -222,12 +223,21 @@ table {
   padding: 15px;
 }
 
-#delivery-table-container table td {
+#delivery-table-container table tr {
   font: calibri;
   height: 50px;
   background-color: #83D1E1;
   color: #212529;
 }
+
+#delivery-table-container table tr:hover  {
+  background-color: #5fc3d7;
+}
+
+#delivery-table-container table tr:active  {
+  background-color: #44b4ca;
+}
+
 
 #clear-button-container {
   justify-content: flex-end;
@@ -292,4 +302,12 @@ input {
 
 #delivery-table-container {
   font-size: 18px;
+}
+
+.deliveryRow {
+  cursor: pointer;
+}
+
+.selected-Delivery:hover {
+  background-color: #9ad7e3;
 }

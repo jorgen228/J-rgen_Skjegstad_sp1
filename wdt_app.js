@@ -2,14 +2,26 @@
 
 const clockElement = document.getElementById("clock-element");
 
+let hour;
+let minute;
+
 function displayTime() {
   let today = new Date();
   let day = today.getDate();
   let month = today.getMonth();
   let year = today.getFullYear();
-  let hour = today.getHours();
-  let minute = today.getMinutes();
+  hour = today.getHours();
+  if (hour < 10) {
+    hour = `0${hour}`;
+  }
+  minute = today.getMinutes();
+  if (minute < 10) {
+    minute = `0${minute}`;
+  }
   let seconds = today.getSeconds();
+  if (seconds < 10) {
+    seconds = `0${seconds}`;
+  }
 
   clockElement.innerText = `${day} ${month} ${year} ${hour}:${minute}:${seconds}`;
 }
@@ -35,9 +47,7 @@ class StaffMember extends Employee {
     outTime,
     duration,
     current,
-    expectedReturnTime,
-    toastDiv,
-    liveToast
+    expectedReturnTime
   ) {
     super(name, surName);
     this.staffNumber = staffNumber;
@@ -48,8 +58,6 @@ class StaffMember extends Employee {
     this.duration = duration;
     this.current = current;
     this.expectedReturnTime = expectedReturnTime;
-    this.toastDiv = null;
-    this.liveToast = null;
   }
   staffMemberIsLate() {
     uppdateToast(this.picture, this.name, this.outTime);
@@ -71,16 +79,45 @@ class StaffMember extends Employee {
   }
 }
 class DeliveryDriver extends Employee {
-  constructor(name, surName, vehicle, telephone, deliveryAddress, returnTime) {
+  constructor(
+    name,
+    surName,
+    vehicle,
+    telephone,
+    deliveryAddress,
+    returnTime,
+    deliveryNumber
+  ) {
     super(name, surName, staffNumber);
     this.vehicle = vehicle;
     this.telephone = telephone;
     this.deliveryAddress = deliveryAddress;
     this.returnTime = returnTime;
+    this.deliveryNumber = deliveryNumber;
+    this.timerID = null;
+  }
+  calculateTime() {
+    if (this.returnTime === null) {
+      return;
+    } else {
+      let returnHours = this.returnTime.slice(0, 2);
+      let returnMinutes = parseInt(this.returnTime.slice(-2));
+      if (returnHours === hour && returnMinutes === minute) {
+        this.deliveryDriverIsLate();
+      }
+    }
   }
   deliveryDriverIsLate() {
+    console.log("delivery is late");
     console.log(this);
-    console.log("delivery driver is late!");
+    clearInterval(this.timerID);
+    this.returnTime = null;
+  }
+  endTimer() {
+    console.log("delivery cleared out");
+    console.log(this);
+    clearInterval(this.timerID);
+    this.returnTime = null;
   }
 }
 
@@ -193,7 +230,7 @@ function resolveAfter2Seconds() {
         $(this).toggleClass("selected");
         $(this).toggleClass("unselected");
       });
-    }, 1000);
+    }, 2000);
   });
 }
 
@@ -331,7 +368,9 @@ function uppdateToCar() {
   vehicleBtn.innerHTML = `<i class="bi bi-car-front-fill"></i>`;
 }
 
-let currenDeliveries = [];
+let displayDeliveries = [];
+let currentDeliveries = [];
+let currentDeliveryNumber = 0;
 
 function addDelivery() {
   let selectedVehicle = vehicleBtn.innerHTML;
@@ -343,66 +382,93 @@ function addDelivery() {
   let timeChar = ":";
 
   if (
+    (vehicleBtn.innerHTML === `<i class="bi bi-bicycle"></i>` ||
+      vehicleBtn.innerHTML === `<i class="bi bi-car-front-fill"></i>`) &&
     isNaN(selectedName) &&
     isNaN(selectedSurname) &&
     !isNaN(selectedTelephone) &&
     isNaN(selectedAddress) &&
     selectedReturn.includes(timeChar)
   ) {
-    console.log("all info iss correct");
     let newDelivery = new DeliveryDriver(
       selectedName,
       selectedSurname,
       selectedVehicle,
       selectedTelephone,
       selectedAddress,
-      selectedReturn
+      selectedReturn,
+      currentDeliveryNumber
     );
-    console.log(newDelivery);
-    currenDeliveries.push(newDelivery);
+    displayDeliveries.push(newDelivery);
+    currentDeliveries.push(newDelivery);
     displayDelivery(newDelivery);
+    console.log(newDelivery);
+    vehicleBtn.innerHTML = "Select:";
+    inputName.value = "";
+    inputSurname.value = "";
+    inputTelephone.value = "";
+    inputAddress.value = "";
+    inputReturn.value = "";
   } else {
     alert("The delivery info is not of correct type. Try again.");
   }
-
-  vehicleBtn.innerHTML = "Select:";
-  inputName.value = "";
-  inputSurname.value = "";
-  inputTelephone.value = "";
-  inputAddress.value = "";
-  inputReturn.value = "";
+  currentDeliveries = [];
 }
 
 $("#add-btn").click(addDelivery);
 
 // Display delivery functionality
+
 let rowdeliveryArray = [];
-const deliveryTable = document.getElementById("delivery-table-container");
+const deliveryTable = document.getElementById("delivery-table");
 const deliveryTbody = deliveryTable.getElementsByTagName("tbody")[0];
 let deliveryRowSuffix = "deliveryRow-";
-let deliveryRowNumber = 1;
+let deliveryRowNumber = 0;
 
 function displayDelivery(deliveryObject) {
-  let newDeliveryRow = deliveryTbody.insertRow();
-  let newDeliveryCell1 = newDeliveryRow.insertCell();
-  newDeliveryCell1.innerHTML = deliveryObject.vehicle;
-  let newDeliveryCell2 = newDeliveryRow.insertCell();
-  newDeliveryCell2.textContent = deliveryObject.name;
-  let newDeliveryCell3 = newDeliveryRow.insertCell();
-  newDeliveryCell3.textContent = deliveryObject.surName;
-  let newDeliveryCell4 = newDeliveryRow.insertCell();
-  newDeliveryCell4.textContent = deliveryObject.telephone;
-  let newDeliveryCell5 = newDeliveryRow.insertCell();
-  newDeliveryCell5.textContent = deliveryObject.deliveryAddress;
-  let newDeliveryCell6 = newDeliveryRow.insertCell();
-  newDeliveryCell6.textContent = deliveryObject.returnTime;
-  newDeliveryRow.id = `${deliveryRowSuffix}${deliveryRowNumber}`;
-  newDeliveryCell1.classList.add("deliveryCell");
-  $(".deliveryCell").click(getDelivery);
-  rowdeliveryArray.push(newDeliveryRow);
-  deliveryRowNumber++;
+  currentDeliveries.forEach(() => {
+    let newDeliveryRow = deliveryTbody.insertRow();
+    let newDeliveryCell1 = newDeliveryRow.insertCell();
+    newDeliveryCell1.innerHTML = deliveryObject.vehicle;
+    let newDeliveryCell2 = newDeliveryRow.insertCell();
+    newDeliveryCell2.textContent = deliveryObject.name;
+    let newDeliveryCell3 = newDeliveryRow.insertCell();
+    newDeliveryCell3.textContent = deliveryObject.surName;
+    let newDeliveryCell4 = newDeliveryRow.insertCell();
+    newDeliveryCell4.textContent = deliveryObject.telephone;
+    let newDeliveryCell5 = newDeliveryRow.insertCell();
+    newDeliveryCell5.textContent = deliveryObject.deliveryAddress;
+    let newDeliveryCell6 = newDeliveryRow.insertCell();
+    newDeliveryCell6.textContent = deliveryObject.returnTime;
+    newDeliveryRow.id = `${deliveryRowSuffix}${deliveryRowNumber}`;
+    newDeliveryRow.classList.add("deliveryRow");
+    rowdeliveryArray.push(newDeliveryRow);
+    deliveryObject.timerID = setInterval(
+      countDownDeliveryTimer.bind(deliveryObject),
+      1000
+    );
+    deliveryRowNumber++;
+    newDeliveryRow.addEventListener("click", function () {
+      $(this).toggleClass("selected-Delivery");
+    });
+    function clearDelivery() {
+      $(".selected-Delivery").closest("tr").remove();
+    }
+    $("#clear-btn").click(clearDelivery);
+  });
 }
 
-function getDelivery() {
-  console.log(this);
+$("#clear-btn").click(function () {
+  let selectedRow = document.getElementsByClassName("selected-Delivery");
+  let id = selectedRow[0].id;
+  let number = parseInt(id.slice(-1));
+  displayDeliveries[number].endTimer();
+});
+
+let deliveriesPastTime = [];
+
+function countDownDeliveryTimer() {
+  for (i = 0; i < displayDeliveries.length; i++) {
+    displayDeliveries[i].calculateTime();
+  }
 }
