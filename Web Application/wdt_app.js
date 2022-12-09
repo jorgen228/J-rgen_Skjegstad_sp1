@@ -247,6 +247,9 @@ $("#in-btn").click(staffIn);
 
 function staffOut() {
   minutesAway = parseInt(prompt("How long will they be away in minutes?"));
+  while (isNaN(minutesAway)) {
+    minutesAway = parseInt(prompt("Please enter their leave in minutes only."));
+  }
   for (i = 0; i < currentObjects.length; i++) {
     clearInterval(currentObjects[i].timerID);
     currentObjects[i].status = "Out";
