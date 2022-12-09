@@ -27,6 +27,14 @@ table {
   box-shadow: none;
 }
 
+#nav a {
+    border: none;
+  background-color: #0E8EA8;
+  color: #fff;
+  margin: 1px;
+  box-shadow: none;
+}
+
 #nav button:hover {
   background-color: #25aec9;
 }

@@ -60,8 +60,8 @@ class StaffMember extends Employee {
     this.expectedReturnTime = expectedReturnTime;
   }
   staffMemberIsLate() {
-    uppdateToast(this.picture, this.name, this.outTime);
-    $(`#liveToast`).toast("show");
+    uppdateToast(this.staffNumber, this.picture, this.name, this.outTime);
+    $(`#liveToast-` + this.staffNumber).toast("show");
   }
   estimateTime() {
     let targetHours = Math.floor(this.duration / 60 / 60);
@@ -88,34 +88,58 @@ class DeliveryDriver extends Employee {
     returnTime,
     deliveryNumber
   ) {
-    super(name, surName, staffNumber);
+    super(name, surName);
     this.vehicle = vehicle;
     this.telephone = telephone;
     this.deliveryAddress = deliveryAddress;
     this.returnTime = returnTime;
     this.deliveryNumber = deliveryNumber;
     this.timerID = null;
+    this.toastContainer = null;
+    this.toastDiv = null;
   }
   calculateTime() {
     if (this.returnTime === null) {
       return;
     } else {
-      let returnHours = this.returnTime.slice(0, 2);
+      let returnHours = parseInt(this.returnTime.slice(0, 2));
       let returnMinutes = parseInt(this.returnTime.slice(-2));
-      if (returnHours === hour && returnMinutes === minute) {
+      if (
+        returnHours === parseInt(hour) &&
+        returnMinutes === parseInt(minute)
+      ) {
         this.deliveryDriverIsLate();
       }
     }
   }
   deliveryDriverIsLate() {
-    console.log("delivery is late");
-    console.log(this);
     clearInterval(this.timerID);
+    this.toastDeliveryContainer = document.getElementById("toast-container");
+    this.toastDiv = document.createElement("div");
+    this.toastDiv.innerHTML = `<div id="liveDeliveryToast-${this.deliveryNumber}" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <strong class="me-auto">Reception Management Dashboard</strong>
+      <small>One second ago</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      <div>
+        <p id="toast-header">A delivery-driver has not returned on time!</p>
+        <h2>${this.vehicle}</h2>
+      </div>
+      <p id="toast-name">Name: ${this.name}</p>
+      <p id="toast-time-away">Expected return was: ${this.returnTime}</p>
+      <button id="toast-btn" class="btn btn-primary">Request return</button>
+      <button id="toast-btn" class="btn btn-primary">
+        Request uppdate
+      </button>
+    </div>
+  </div>`;
+    this.toastDeliveryContainer.appendChild(this.toastDiv);
+    $(`#liveDeliveryToast-` + this.deliveryNumber).toast("show");
     this.returnTime = null;
   }
   endTimer() {
-    console.log("delivery cleared out");
-    console.log(this);
     clearInterval(this.timerID);
     this.returnTime = null;
   }
@@ -137,7 +161,7 @@ let staffArray = [];
 function displayStaffMembers(staffObject) {
   let newRow = employeeTbody.insertRow();
   let newCell1 = newRow.insertCell();
-  newCell1.innerHTML = `<img class="staff-img unselected" id="img-${staffNumber}" onclick="getObject${staffNumber}()" src="${staffObject.picture}">`;
+  newCell1.innerHTML = `<img class="staff-img unselected" id="img-${staffNumber}" src="${staffObject.picture}">`;
   let newCell2 = newRow.insertCell();
   newCell2.textContent = staffObject.name;
   let newCell3 = newRow.insertCell();
@@ -197,40 +221,19 @@ staffUserGet();
 
 currentObjects = [];
 
-function getObject1() {
-  currentObjects.push(staffArray[0]);
-  selectedStaff = 0;
-  staffNumber = 1;
-}
-function getObject2() {
-  currentObjects.push(staffArray[1]);
-  selectedStaff = 1;
-  staffNumber = 2;
-}
-function getObject3() {
-  currentObjects.push(staffArray[2]);
-  selectedStaff = 2;
-  staffNumber = 3;
-}
-function getObject4() {
-  currentObjects.push(staffArray[3]);
-  selectedStaff = 3;
-  staffNumber = 4;
-}
-function getObject5() {
-  currentObjects.push(staffArray[4]);
-  selectedStaff = 4;
-  staffNumber = 5;
-}
-
 function resolveAfter2Seconds() {
   return new Promise((resolve) => {
     setTimeout(() => {
       $(".staff-img").click(function () {
         $(this).toggleClass("selected");
-        $(this).toggleClass("unselected");
       });
-    }, 2000);
+      $(".unselected").click(function () {
+        let currentImage = $(this);
+        let currentID = currentImage[0].id;
+        let objectNumber = parseInt(currentID.slice(-1));
+        currentObjects.push(staffArray[objectNumber - 1]);
+      });
+    }, 1000);
   });
 }
 
@@ -287,7 +290,6 @@ function staffOut() {
     );
   }
 
-  $(".selected").toggleClass("unselected");
   $(".selected").toggleClass("selected");
 
   uppdateTable();
@@ -301,7 +303,6 @@ function countDownTimer() {
     } else {
       if (staffArray[i].duration !== 0) {
         staffArray[i].duration--;
-        console.log(staffArray[i].duration);
         staffArray[i].estimateTime();
         rowArray[i].childNodes[6].textContent = staffArray[i].current;
       } else {
@@ -323,8 +324,6 @@ function staffIn() {
     currentObjects[i].current = `00:00:00`;
     currentObjects[i].expectedReturnTime = "__";
   }
-
-  $(".selected").toggleClass("unselected");
   $(".selected").toggleClass("selected");
 
   uppdateTable();
@@ -344,15 +343,29 @@ $("#liveToastBtn").click(function () {
   $(`#liveToast`).toast("show");
 });
 
-function uppdateToast(img, name, timeOut) {
-  let toastHeader = document.getElementById("toast-header");
-  let toastImg = document.getElementById("toast-img");
-  let toastName = document.getElementById("toast-name");
-  let toastTimeAway = document.getElementById("toast-time-away");
-  toastHeader.innerText = "A staffmember is running late!";
-  toastImg.src = img;
-  toastName.textContent = "Name: " + name;
-  toastTimeAway.textContent = "Time away: " + timeOut;
+function uppdateToast(number, img, name, timeOut) {
+  let toastContainer = document.getElementById("toast-container");
+  let newDiv = document.createElement("div");
+  newDiv.innerHTML = `<div id="liveToast-${number}" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="toast-header">
+    <strong class="me-auto">Reception Management Dashboard</strong>
+    <small>One second ago</small>
+    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+  </div>
+  <div class="toast-body">
+    <div>
+      <p id="toast-header">A staffmember is running late!</p>
+      <img id="toast-img" src="${img}" alt="" />
+    </div>
+    <p id="toast-name">Name: ${name}</p>
+    <p id="toast-time-away">Time away: ${timeOut}</p>
+    <button id="toast-btn" class="btn btn-primary">Request return</button>
+    <button id="toast-btn" class="btn btn-primary">
+      Request uppdate
+    </button>
+  </div>
+</div>`;
+  toastContainer.appendChild(newDiv);
 }
 
 // Create delivery functionality
@@ -391,8 +404,10 @@ function addDelivery() {
     isNaN(selectedName) &&
     isNaN(selectedSurname) &&
     !isNaN(selectedTelephone) &&
+    !(selectedTelephone.length == 0) &&
     isNaN(selectedAddress) &&
-    selectedReturn.includes(timeChar)
+    selectedReturn.includes(timeChar) &&
+    selectedReturn.length < 6
   ) {
     let newDelivery = new DeliveryDriver(
       selectedName,
@@ -405,8 +420,8 @@ function addDelivery() {
     );
     displayDeliveries.push(newDelivery);
     currentDeliveries.push(newDelivery);
+    currentDeliveryNumber++;
     displayDelivery(newDelivery);
-    console.log(newDelivery);
     vehicleBtn.innerHTML = "Select:";
     inputName.value = "";
     inputSurname.value = "";
@@ -423,7 +438,6 @@ $("#add-btn").click(addDelivery);
 
 // Display delivery functionality
 
-let rowdeliveryArray = [];
 const deliveryTable = document.getElementById("delivery-table");
 const deliveryTbody = deliveryTable.getElementsByTagName("tbody")[0];
 let deliveryRowSuffix = "deliveryRow-";
@@ -446,7 +460,6 @@ function displayDelivery(deliveryObject) {
     newDeliveryCell6.textContent = deliveryObject.returnTime;
     newDeliveryRow.id = `${deliveryRowSuffix}${deliveryRowNumber}`;
     newDeliveryRow.classList.add("deliveryRow");
-    rowdeliveryArray.push(newDeliveryRow);
     deliveryObject.timerID = setInterval(
       countDownDeliveryTimer.bind(deliveryObject),
       1000
@@ -455,18 +468,23 @@ function displayDelivery(deliveryObject) {
     newDeliveryRow.addEventListener("click", function () {
       $(this).toggleClass("selected-Delivery");
     });
-    function clearDelivery() {
-      $(".selected-Delivery").closest("tr").remove();
-    }
-    $("#clear-btn").click(clearDelivery);
   });
 }
 
 $("#clear-btn").click(function () {
-  let selectedRow = document.getElementsByClassName("selected-Delivery");
-  let id = selectedRow[0].id;
-  let number = parseInt(id.slice(-1));
-  displayDeliveries[number].endTimer();
+  let confirmAction = confirm(
+    "Are you shure you want do delete this delivery?"
+  );
+  if (confirmAction) {
+    let selectedRow = document.getElementsByClassName("selected-Delivery");
+    let id = selectedRow[0].id;
+    let number = parseInt(id.slice(-1));
+    displayDeliveries[number].endTimer();
+    $(".selected-Delivery").closest("tr").remove();
+  } else {
+    $(".selected-Delivery").toggleClass("selected-Delivery");
+    return;
+  }
 });
 
 let deliveriesPastTime = [];
@@ -475,4 +493,29 @@ function countDownDeliveryTimer() {
   for (i = 0; i < displayDeliveries.length; i++) {
     displayDeliveries[i].calculateTime();
   }
+}
+
+function uppdateDeliveryToast(number, vehicle, name, time) {
+  let toastContainer = document.getElementById("toast-container");
+  let newDeliveryDiv = document.createElement("div");
+  newDeliveryDiv.innerHTML = `<div id="liveDeliveryToast-${number}" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="toast-header">
+    <strong class="me-auto">Reception Management Dashboard</strong>
+    <small>One second ago</small>
+    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+  </div>
+  <div class="toast-body">
+    <div>
+      <p id="toast-header">A delivery-driver has not returned on time!</p>
+      <h2>${vehicle}</h2>
+    </div>
+    <p id="toast-name">Name: ${name}</p>
+    <p id="toast-time-away">Expected return was: ${time}</p>
+    <button id="toast-btn" class="btn btn-primary">Request return</button>
+    <button id="toast-btn" class="btn btn-primary">
+      Request uppdate
+    </button>
+  </div>
+</div>`;
+  toastContainer.appendChild(newDeliveryDiv);
 }
