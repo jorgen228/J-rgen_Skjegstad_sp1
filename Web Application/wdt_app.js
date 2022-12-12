@@ -114,28 +114,12 @@ class DeliveryDriver extends Employee {
   }
   deliveryDriverIsLate() {
     clearInterval(this.timerID);
-    this.toastDeliveryContainer = document.getElementById("toast-container");
-    this.toastDiv = document.createElement("div");
-    this.toastDiv.innerHTML = `<div id="liveDeliveryToast-${this.deliveryNumber}" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header">
-      <strong class="me-auto">Reception Management Dashboard</strong>
-      <small>One second ago</small>
-      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-    <div class="toast-body">
-      <div>
-        <p id="toast-header">A delivery-driver has not returned on time!</p>
-        <h2>${this.vehicle}</h2>
-      </div>
-      <p id="toast-name">Name: ${this.name}</p>
-      <p id="toast-time-away">Expected return was: ${this.returnTime}</p>
-      <button id="toast-btn" class="btn btn-primary">Request return</button>
-      <button id="toast-btn" class="btn btn-primary">
-        Request uppdate
-      </button>
-    </div>
-  </div>`;
-    this.toastDeliveryContainer.appendChild(this.toastDiv);
+    uppdateDeliveryToast(
+      this.deliveryNumber,
+      this.vehicle,
+      this.name,
+      this.returnTime
+    );
     $(`#liveDeliveryToast-` + this.deliveryNumber).toast("show");
     this.returnTime = null;
   }
@@ -153,10 +137,6 @@ const employeeTbody = employeeTable.getElementsByTagName("tbody")[0];
 let rowSuffix = "row-";
 let rowNumber = 1;
 let rowArray = [];
-
-let numberOfEmplyees = [1, 2, 3, 4, 5];
-let staffNumber = 1;
-let staffArray = [];
 
 function displayStaffMembers(staffObject) {
   let newRow = employeeTbody.insertRow();
@@ -183,9 +163,12 @@ function displayStaffMembers(staffObject) {
 }
 
 let staffInt = 0;
+let numberOfEmplyees = 5;
+let staffNumber = 1;
+let staffArray = [];
 
 function staffUserGet() {
-  numberOfEmplyees.forEach(() => {
+  for (i = 0; i < numberOfEmplyees; i++) {
     $.ajax({
       url: "https://randomuser.me/api/",
       dataType: "json",
@@ -212,7 +195,7 @@ function staffUserGet() {
         staffInt++;
       },
     });
-  });
+  }
 }
 
 staffUserGet();
@@ -222,7 +205,7 @@ staffUserGet();
 currentObjects = [];
 
 function resolveAfter2Seconds() {
-  return new Promise((resolve) => {
+  return new Promise(() => {
     setTimeout(() => {
       $(".staff-img").click(function () {
         $(this).toggleClass("selected");
@@ -470,6 +453,7 @@ function displayDelivery(deliveryObject) {
     deliveryRowNumber++;
     newDeliveryRow.addEventListener("click", function () {
       $(this).toggleClass("selected-Delivery");
+      $(this).css("background-color", "#44b4ca");
     });
   });
 }
@@ -485,6 +469,7 @@ $("#clear-btn").click(function () {
     displayDeliveries[number].endTimer();
     $(".selected-Delivery").closest("tr").remove();
   } else {
+    $(".selected-Delivery").css("background-color", "#83D1E1");
     $(".selected-Delivery").toggleClass("selected-Delivery");
     return;
   }
